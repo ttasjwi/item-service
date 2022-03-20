@@ -81,6 +81,20 @@ public class BasicItemController {
         return "/basic/item";
     }
 
+    @GetMapping("/{itemId}/edit")
+    public String editForm(@PathVariable Long itemId, Model model) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(()-> new NoSuchElementException("해당 상품 id에 일치하는 상품이 존재하지 않습니다."));
+        model.addAttribute("item", item);
+        return "/basic/editForm";
+    }
+
+    @PostMapping("/{itemId}/edit")
+    public String edit(@PathVariable Long itemId, @ModelAttribute ItemUpdateRequest itemUpdateRequest) {
+        itemRepository.update(itemId, itemUpdateRequest);
+        return "redirect:/basic/items/{itemId}";
+    }
+
     /**
      * 테스트용 데이터 추가
      */
