@@ -5,9 +5,7 @@ import com.ttasjwi.itemservice.domain.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -33,6 +31,54 @@ public class BasicItemController {
                 .orElseThrow(() -> new NoSuchElementException("해당 상품 id에 일치하는 상품이 존재하지 않습니다."));
         model.addAttribute("item", item);
         return "basic/item";
+    }
+
+    @GetMapping("/add")
+    public String addForm() {
+        return "/basic/addForm";
+    }
+
+    // @PostMapping("/add")
+    public String addItemV1(@RequestParam String itemName,
+                            @RequestParam Integer price,
+                            @RequestParam Integer quantity,
+                            Model model) {
+        Item item = Item.builder()
+                .itemName(itemName)
+                .price(price)
+                .quantity(quantity)
+                .build();
+
+        itemRepository.save(item);
+        model.addAttribute(item);
+        return "/basic/item";
+    }
+
+    //@PostMapping("/add")
+    public String addItemV2(@ModelAttribute("itemCreateRequest") ItemCreateRequest itemCreateRequest,
+                            Model model) {
+        Item item = itemCreateRequest.toEntity();
+        itemRepository.save(item);
+        model.addAttribute(item); // @ModelAttribute("item")으로 바로 item을 생성했을 경우, item이 자동으로 model에 추가됨
+        return "/basic/item";
+    }
+
+    //@PostMapping("/add")
+    public String addItemV3(@ModelAttribute ItemCreateRequest itemCreateRequest,
+                            Model model) {
+        Item item = itemCreateRequest.toEntity();
+        itemRepository.save(item);
+        model.addAttribute(item); // @ModelAttribute("item")으로 바로 item을 생성했을 경우, item이 자동으로 model에 추가됨
+        return "/basic/item";
+    }
+
+    @PostMapping("/add")
+    public String addItemV4(ItemCreateRequest itemCreateRequest,
+                            Model model) {
+        Item item = itemCreateRequest.toEntity();
+        itemRepository.save(item);
+        model.addAttribute(item); // @ModelAttribute("item")으로 바로 item을 생성했을 경우, item이 자동으로 model에 추가됨
+        return "/basic/item";
     }
 
     /**
